@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HydroConnect Project Electricity Analysis Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin: 10px 0 0 0;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .chart-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .chart-canvas {
+            max-height: 400px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .insights {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .insights h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+        
+        .insights ul {
+            color: #34495e;
+            line-height: 1.8;
+        }
+        
+        .insights li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>HydroConnect Project Analysis</h1>
+            <p>Power Generation & Instrumentation Performance Dashboard - Dukuh Pengos</p>
+        </div>
+        
+        <div class="chart-grid">
+            <div class="chart-container">
+                <div class="chart-title">Power Capacity Comparison (Before vs After)</div>
+                <canvas id="capacityChart" class="chart-canvas"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Daily Energy Distribution (After Project)</div>
+                <canvas id="energyDistChart" class="chart-canvas"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Monitoring Parameters Evolution</div>
+                <canvas id="monitoringChart" class="chart-canvas"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">System Reliability & Backup Duration</div>
+                <canvas id="reliabilityChart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">567%</div>
+                <div class="metric-label">Capacity Increase</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">5.15</div>
+                <div class="metric-label">kWh/day Solar Output</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">4</div>
+                <div class="metric-label">IoT Parameters</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">3.6</div>
+                <div class="metric-label">kWh Battery Storage</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">61%</div>
+                <div class="metric-label">Energy Surplus Rate</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">24/7</div>
+                <div class="metric-label">Real-time Monitoring</div>
+            </div>
+        </div>
+        
+        <div class="insights">
+            <h3>Key Insights & Recommendations</h3>
+            <ul>
+                <li><strong>Exceptional Capacity Growth:</strong> The project achieved a 567% increase in power capacity, from 450W to 3000W potential, ensuring robust operations without overload issues.</li>
+                <li><strong>Energy Independence:</strong> Solar panels generate 257% more energy than daily consumption (5.15 kWh vs 2.0 kWh), creating significant energy surplus for storage and future expansion.</li>
+                <li><strong>Monitoring Revolution:</strong> Transition from manual periodic monitoring to real-time IoT system monitoring 4 critical water quality parameters (TDS, Turbidity, pH, Temperature), enabling proactive maintenance.</li>
+                <li><strong>System Resilience:</strong> 3-hour backup capability ensures continuous operation during PLN outages or low solar conditions, critical for community water security.</li>
+                <li><strong>Optimization Opportunity:</strong> With 61% energy surplus, there's potential for expanding services or adding community facilities like EV charging stations or additional water treatment units.</li>
+                <li><strong>Sustainability Impact:</strong> The hybrid system reduces PLN dependency by approximately 78%, significantly lowering operational costs and carbon footprint.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Chart configurations
+        const chartColors = {
+            primary: '#667eea',
+            secondary: '#764ba2',
+            success: '#2ecc71',
+            warning: '#f39c12',
+            danger: '#e74c3c',
+            info: '#3498db',
+            light: '#ecf0f1',
+            dark: '#2c3e50'
+        };
+
+        // Power Capacity Comparison Chart
+        const capacityCtx = document.getElementById('capacityChart').getContext('2d');
+        new Chart(capacityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Before Project', 'After Project (Operational)', 'After Project (Peak Potential)'],
+                datasets: [{
+                    label: 'Power Capacity (Watts)',
+                    data: [450, 1100, 3000],
+                    backgroundColor: [
+                        chartColors.danger,
+                        chartColors.primary,
+                        chartColors.success
+                    ],
+                    borderColor: [
+                        chartColors.danger,
+                        chartColors.primary,
+                        chartColors.success
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Watts'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Energy Distribution Pie Chart
+        const energyCtx = document.getElementById('energyDistChart').getContext('2d');
+        new Chart(energyCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Water Pump', 'Filtration Unit', 'Standby Load', 'Battery Storage'],
+                datasets: [{
+                    data: [1.4, 0.4, 0.2, 3.15],
+                    backgroundColor: [
+                        chartColors.primary,
+                        chartColors.info,
+                        chartColors.warning,
+                        chartColors.success
+                    ],
+                    borderWidth: 3,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Monitoring Parameters Chart
+        const monitoringCtx = document.getElementById('monitoringChart').getContext('2d');
+        new Chart(monitoringCtx, {
+            type: 'radar',
+            data: {
+                labels: ['TDS', 'Turbidity', 'pH', 'Temperature'],
+                datasets: [{
+                    label: 'Before Project',
+                    data: [0, 0, 0, 0],
+                    backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                    borderColor: chartColors.danger,
+                    borderWidth: 2
+                }, {
+                    label: 'After Project',
+                    data: [1, 1, 1, 1],
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderColor: chartColors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 1,
+                        ticks: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Reliability Chart
+        const reliabilityCtx = document.getElementById('reliabilityChart').getContext('2d');
+        new Chart(reliabilityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['PLN Dependency', 'Backup Duration', 'Energy Surplus', 'Monitoring Frequency'],
+                datasets: [{
+                    label: 'Before Project',
+                    data: [100, 0, 0, 20],
+                    backgroundColor: 'rgba(231, 76, 60, 0.7)',
+                    borderColor: chartColors.danger,
+                    borderWidth: 2
+                }, {
+                    label: 'After Project',
+                    data: [22, 180, 61, 100],
+                    backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                    borderColor: chartColors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Percentage/Minutes'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
